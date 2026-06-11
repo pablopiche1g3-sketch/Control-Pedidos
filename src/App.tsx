@@ -13,12 +13,28 @@ import {
   Wifi,
   WifiOff,
   RefreshCw,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { db, seedDatabaseIfEmpty, commitChanges } from './firebase';
 import { collection, onSnapshot, getDocs, writeBatch } from 'firebase/firestore';
 
 export default function App() {
   const fromEmail = 'pablopiche1g3@gmail.com';
+
+  // --- Dark Mode State ---
+  const [darkMode, setDarkMode] = useState<boolean>(() => {
+    return localStorage.getItem('cr_dark_mode') === 'true';
+  });
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('cr_dark_mode', String(darkMode));
+  }, [darkMode]);
 
   // --- Real-time States from Firestore ---
   const [branches, setBranches] = useState<Branch[]>([]);
@@ -163,28 +179,28 @@ export default function App() {
     switch (dbStatus) {
       case 'connecting':
         return (
-          <span className="bg-amber-50 text-amber-700 border border-amber-200 px-1.5 py-0.5 rounded text-[9px] font-mono font-bold flex items-center gap-1">
+          <span className="bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-900/60 px-1.5 py-0.5 rounded text-[9px] font-mono font-bold flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
             CONECTANDO CLOUD...
           </span>
         );
       case 'connected':
         return (
-          <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 px-1.5 py-0.5 rounded text-[9px] font-mono font-bold flex items-center gap-1">
+          <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-900/60 px-1.5 py-0.5 rounded text-[9px] font-mono font-bold flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-550"></span>
             FIRESTORE ONLINE
           </span>
         );
       case 'resetting':
         return (
-          <span className="bg-blue-50 text-blue-700 border border-blue-200 px-1.5 py-0.5 rounded text-[9px] font-mono font-bold flex items-center gap-1">
+          <span className="bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-400 dark:border-blue-900/60 px-1.5 py-0.5 rounded text-[9px] font-mono font-bold flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-spin"></span>
             RESTABLECIENDO...
           </span>
         );
       case 'error':
         return (
-          <span className="bg-rose-50 text-rose-700 border border-rose-200 px-1.5 py-0.5 rounded text-[9px] font-mono font-bold flex items-center gap-1">
+          <span className="bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-900/60 px-1.5 py-0.5 rounded text-[9px] font-mono font-bold flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
             FIRESTORE OFFLINE
           </span>
@@ -193,9 +209,9 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-[#1e293b] flex flex-col font-sans selection:bg-blue-150">
+    <div className="min-h-screen bg-[#f8fafc] text-[#1e293b] dark:bg-slate-900 dark:text-slate-100 flex flex-col font-sans selection:bg-blue-150 transition-colors duration-250">
       {/* Upper header segment */}
-      <header className="border-b border-slate-200 bg-white sticky top-0 z-40 shadow-sm">
+      <header className="border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 sticky top-0 z-40 shadow-sm transition-colors duration-250">
         <div className="max-w-7xl mx-auto px-4 py-3.5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           {/* Brand Logo & Info */}
           <div className="flex items-center gap-3">
@@ -204,13 +220,13 @@ export default function App() {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-slate-900 font-bold text-lg tracking-tight">Centro de Requisición & Pedidos</h1>
-                <span className="hidden sm:inline bg-blue-50 text-blue-700 border border-blue-200 px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold">
+                <h1 className="text-slate-900 dark:text-slate-50 font-bold text-lg tracking-tight">Centro de Requisición & Pedidos</h1>
+                <span className="hidden sm:inline bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-400 dark:border-blue-900/60 px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold">
                   SISTEMA INTERNO
                 </span>
                 {getStatusBadge()}
               </div>
-              <p className="text-xs text-slate-500 font-medium">
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
                 Gestión de órdenes de pedidos internas entre tiendas y externas con proveedores (Cloud Sync)
               </p>
             </div>
@@ -218,18 +234,27 @@ export default function App() {
 
           {/* User profile & controls */}
           <div className="flex items-center gap-3">
+            {/* Dark Mode Toggle Button */}
+            <button
+              onClick={() => setDarkMode(!darkMode)}
+              className="p-1.5 border border-slate-200 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-900 rounded-lg text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-105 transition-all cursor-pointer bg-white dark:bg-slate-950"
+              title={darkMode ? "Activar Modo Claro" : "Activar Modo Oscuro"}
+            >
+              {darkMode ? <Sun className="w-4.5 h-4.5 text-amber-500 animate-pulse" /> : <Moon className="w-4.5 h-4.5 text-slate-500" />}
+            </button>
+
             <div className="hidden md:block text-right">
-              <span className="text-xs font-semibold text-slate-800 block">Pablo Piché</span>
-              <span className="text-[10px] text-blue-600 font-mono">pablopiche1g3@gmail.com</span>
+              <span className="text-xs font-semibold text-slate-850 dark:text-slate-200 block">Pablo Piché</span>
+              <span className="text-[10px] text-blue-600 dark:text-blue-450 font-mono">pablopiche1g3@gmail.com</span>
             </div>
-            <div className="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center" title="Perfil de Usuario">
-              <span className="text-xs font-bold text-slate-600">PP</span>
+            <div className="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 dark:bg-slate-900 dark:border-slate-800 flex items-center justify-center" title="Perfil de Usuario">
+              <span className="text-xs font-bold text-slate-600 dark:text-slate-300">PP</span>
             </div>
             
             <button
               onClick={handleResetDatabase}
               disabled={dbStatus === 'resetting' || dbStatus === 'connecting'}
-              className="p-1 px-2.5 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 rounded-lg text-xs text-slate-500 hover:text-slate-800 transition-all cursor-pointer bg-white disabled:opacity-50"
+              className="p-1 px-2.5 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 dark:border-slate-800 dark:hover:bg-slate-900 dark:hover:border-slate-700 rounded-lg text-xs text-slate-555 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition-all cursor-pointer bg-white dark:bg-slate-950 disabled:opacity-50"
               title="Restablecer base de datos en Firestore"
             >
               Restablecer Cloud
@@ -242,19 +267,19 @@ export default function App() {
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
         
         {/* Navigation Tabs Bar */}
-        <div className="bg-white border border-slate-200 p-1.5 rounded-xl flex flex-wrap sm:flex-nowrap items-center gap-1.5 shadow-sm">
+        <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-1.5 rounded-xl flex flex-wrap sm:flex-nowrap items-center gap-1.5 shadow-sm transition-colors duration-250">
           <button
             onClick={() => setActiveTab('requisitions')}
             className={`flex-1 py-3 px-4 rounded-lg text-xs font-medium cursor-pointer flex items-center justify-center gap-2 transition-all ${
               activeTab === 'requisitions'
                 ? 'bg-blue-600 text-white shadow-sm font-semibold'
-                : 'hover:bg-slate-50 text-slate-600 hover:text-slate-900'
+                : 'hover:bg-slate-50 text-slate-600 hover:text-slate-900 dark:hover:bg-slate-900 dark:text-slate-400 dark:hover:text-slate-100'
             }`}
           >
             <FileText className="w-4 h-4" />
             Pedidos Internos (Tiendas)
             {totalPendingReqs > 0 && (
-              <span className="bg-amber-100 text-amber-800 border border-amber-200 font-mono text-[10px] font-bold px-1.5 rounded-full min-w-4 h-4 flex items-center justify-center leading-none">
+              <span className="bg-amber-100 text-amber-800 border border-amber-200 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-900/60 font-mono text-[10px] font-bold px-1.5 rounded-full min-w-4 h-4 flex items-center justify-center leading-none">
                 {totalPendingReqs}
               </span>
             )}
@@ -265,7 +290,7 @@ export default function App() {
             className={`flex-1 py-3 px-4 rounded-lg text-xs font-medium cursor-pointer flex items-center justify-center gap-2 transition-all ${
               activeTab === 'external_orders'
                 ? 'bg-blue-600 text-white shadow-sm font-semibold'
-                : 'hover:bg-slate-50 text-slate-600 hover:text-slate-900'
+                : 'hover:bg-slate-50 text-slate-600 hover:text-slate-900 dark:hover:bg-slate-900 dark:text-slate-400 dark:hover:text-slate-100'
             }`}
           >
             <Truck className="w-4 h-4" />
@@ -277,13 +302,13 @@ export default function App() {
             className={`flex-1 py-3 px-4 rounded-lg text-xs font-medium cursor-pointer flex items-center justify-center gap-2 transition-all ${
               activeTab === 'branches'
                 ? 'bg-blue-600 text-white shadow-sm font-semibold'
-                : 'hover:bg-slate-50 text-slate-600 hover:text-slate-900'
+                : 'hover:bg-slate-50 text-slate-600 hover:text-slate-900 dark:hover:bg-slate-900 dark:text-slate-400 dark:hover:text-slate-100'
             }`}
             title="Nueva Opción: Registrar Sucursales, asignar Centros de Distribución y rastrear procedencias"
           >
             <Building className="w-4 h-4" />
             Sucursales & CD
-            <span className="bg-blue-50 text-blue-700 border border-blue-200 text-[9px] font-bold px-1.5 py-0.5 rounded font-mono">
+            <span className="bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-450 dark:border-blue-900/60 text-[9px] font-bold px-1.5 py-0.5 rounded font-mono">
               NUEVO
             </span>
           </button>
@@ -293,7 +318,7 @@ export default function App() {
             className={`flex-1 py-3 px-4 rounded-lg text-xs font-medium cursor-pointer flex items-center justify-center gap-2 transition-all ${
               activeTab === 'bulk_loader'
                 ? 'bg-blue-600 text-white shadow-sm font-semibold'
-                : 'hover:bg-slate-50 text-slate-600 hover:text-slate-900'
+                : 'hover:bg-slate-50 text-slate-600 hover:text-slate-900 dark:hover:bg-slate-900 dark:text-slate-400 dark:hover:text-slate-100'
             }`}
           >
             <UploadCloud className="w-4 h-4" />
@@ -341,13 +366,13 @@ export default function App() {
       </main>
 
       {/* Elegant minimalist footer */}
-      <footer className="border-t border-slate-200 bg-white py-4 mt-12 text-center text-xs text-slate-500 font-mono">
+      <footer className="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 py-4 mt-12 text-center text-xs text-slate-500 dark:text-slate-400 font-mono transition-colors duration-250">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
           <span>
             © 2026 Centro de Requisición & Pedidos internos de El Salvador. todos los derechos reservados.
           </span>
-          <span className="text-slate-600">
-            Usuario Activo: <strong className="text-slate-500 font-medium">{fromEmail}</strong>
+          <span className="text-slate-600 dark:text-slate-400">
+            Usuario Activo: <strong className="text-slate-500 dark:text-slate-300 font-medium">{fromEmail}</strong>
           </span>
         </div>
       </footer>

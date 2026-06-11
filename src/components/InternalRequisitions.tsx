@@ -178,28 +178,28 @@ export default function InternalRequisitions({
   const getStatusBadgeClass = (status: RequisitionStatus) => {
     switch (status) {
       case 'Pendiente':
-        return 'bg-amber-50 text-amber-700 border border-amber-200';
+        return 'bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-900/60';
       case 'Procesado':
-        return 'bg-blue-50 text-blue-700 border border-blue-200';
+        return 'bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-400 dark:border-blue-900/60';
       case 'En Tránsito':
-        return 'bg-indigo-50 text-indigo-700 border border-indigo-200';
+        return 'bg-indigo-50 text-indigo-700 border border-indigo-200 dark:bg-indigo-950/40 dark:text-indigo-400 dark:border-indigo-900/60';
       case 'Entregado':
-        return 'bg-emerald-50 text-emerald-700 border border-emerald-200';
+        return 'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-900/60';
       case 'Cancelado':
-        return 'bg-rose-50 text-rose-700 border border-rose-200';
+        return 'bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-950/40 dark:text-rose-450 dark:border-rose-900/60';
     }
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-[#1e293b] dark:text-slate-105">
       {/* Alert Banner */}
       {notification && (
-        <div className="p-4 bg-blue-50 border border-blue-200 text-blue-800 rounded-xl shadow-sm animate-fade-in flex items-center justify-between">
+        <div className="p-4 bg-blue-50 border border-blue-200 text-blue-800 dark:bg-blue-950/40 dark:border-blue-900/60 dark:text-blue-400 rounded-xl shadow-sm animate-fade-in flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse"></div>
             <span className="text-sm font-medium">{notification}</span>
           </div>
-          <button onClick={() => setNotification(null)} className="text-blue-500 hover:text-blue-700">
+          <button onClick={() => setNotification(null)} className="text-blue-500 dark:text-blue-400 hover:text-blue-705 cursor-pointer bg-transparent border-0 outline-none">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -209,31 +209,31 @@ export default function InternalRequisitions({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* Left Side: Create Requisition (Span 5) */}
-        <div className="lg:col-span-5 bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm flex flex-col">
+        <div className="lg:col-span-5 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm flex flex-col transition-colors duration-250">
           {/* Header */}
-          <div className="bg-slate-50 p-4 border-b border-slate-200">
+          <div className="bg-slate-50 dark:bg-slate-900 p-4 border-b border-slate-200 dark:border-slate-800 transition-colors">
             <div className="flex items-center gap-2">
-              <FileText className="w-5 h-5 text-blue-600" />
-              <h2 className="text-slate-800 font-semibold text-sm">Nueva Requisición entre Sucursales</h2>
+              <FileText className="w-5 h-5 text-blue-600 dark:text-blue-500" />
+              <h2 className="text-slate-800 dark:text-slate-100 font-semibold text-sm">Nueva Requisición entre Sucursales</h2>
             </div>
-            <p className="text-xs text-slate-500 mt-1">Solicite y traslade stock de forma ágil entre cualquier sede o CEDI.</p>
+            <p className="text-xs text-slate-500 dark:text-slate-405 mt-1">Solicite y traslade stock de forma ágil entre cualquier sede o CEDI.</p>
           </div>
 
           <div className="p-5 space-y-4 flex-1">
             {/* Warehouses configuration */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-[10px] font-mono text-slate-500 uppercase tracking-wider mb-1 font-bold">
+                <label className="block text-[10px] font-mono text-slate-500 dark:text-slate-450 uppercase tracking-wider mb-1 font-bold">
                   BODEGA (LA QUE DA EL MATERIAL)
                 </label>
                 <select
                   value={originId}
                   onChange={(e) => setOriginId(e.target.value)}
-                  className="w-full bg-white border border-slate-200 text-slate-700 text-xs rounded-lg p-2.5 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                  className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-xs rounded-lg p-2.5 outline-none focus:border-blue-500 dark:focus:border-blue-600 transition-colors"
                 >
-                  <option value="">Origen...</option>
+                  <option value="" className="dark:bg-slate-900">Origen...</option>
                   {origBodegas.map((b) => (
-                    <option key={b.id} value={b.id}>
+                    <option key={b.id} value={b.id} className="dark:bg-slate-900">
                       {b.name} ({b.type === 'cedi' ? 'CEDI' : 'Suc.'})
                     </option>
                   ))}
@@ -241,17 +241,17 @@ export default function InternalRequisitions({
               </div>
 
               <div>
-                <label className="block text-[10px] font-mono text-slate-500 uppercase tracking-wider mb-1 font-bold">
+                <label className="block text-[10px] font-mono text-slate-500 dark:text-slate-455 uppercase tracking-wider mb-1 font-bold">
                   BODEGA (QUE SOLICITA)
                 </label>
                 <select
                   value={destinationId}
                   onChange={(e) => handleDestinationChange(e.target.value)}
-                  className="w-full bg-white border border-slate-200 text-slate-700 text-xs rounded-lg p-2.5 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                  className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-xs rounded-lg p-2.5 outline-none focus:border-blue-500 dark:focus:border-blue-600 transition-colors"
                 >
-                  <option value="">Destino...</option>
+                  <option value="" className="dark:bg-slate-900">Destino...</option>
                   {destBodegas.map((b) => (
-                    <option key={b.id} value={b.id}>
+                    <option key={b.id} value={b.id} className="dark:bg-slate-900">
                       {b.name}
                     </option>
                   ))}
@@ -261,7 +261,7 @@ export default function InternalRequisitions({
 
             {/* Manager Name */}
             <div>
-              <label className="block text-[10px] font-mono text-slate-500 uppercase tracking-wider mb-1 font-bold">
+              <label className="block text-[10px] font-mono text-slate-500 dark:text-slate-450 uppercase tracking-wider mb-1 font-bold">
                 RESPONSABLE DE SOLICITUD
               </label>
               <input
@@ -269,24 +269,24 @@ export default function InternalRequisitions({
                 placeholder="Nombre del encargado..."
                 value={managerName}
                 onChange={(e) => setManagerName(e.target.value)}
-                className="w-full bg-white border border-slate-200 text-slate-700 text-xs placeholder-slate-400 rounded-lg px-3 py-2.5 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 text-xs placeholder-slate-400 dark:placeholder-slate-500 rounded-lg px-3 py-2.5 outline-none focus:border-blue-500 dark:focus:border-blue-600 transition-colors"
               />
             </div>
 
             {/* Product Inputs Panel */}
-            <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl space-y-3">
-              <span className="text-[10px] font-mono uppercase text-blue-700 font-bold block">Agregar Producto Manual</span>
+            <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-xl space-y-3 transition-colors">
+              <span className="text-[10px] font-mono uppercase text-blue-700 dark:text-blue-400 font-bold block">Agregar Producto Manual</span>
               
               <div className="grid grid-cols-3 gap-2">
                 <div className="col-span-2">
-                  <label className="block text-[9px] font-mono text-slate-500 uppercase mb-1">Código / SKU</label>
+                  <label className="block text-[9px] font-mono text-slate-500 dark:text-slate-400 uppercase mb-1">Código / SKU</label>
                   <input
                     type="text"
                     placeholder="Escribe SKU..."
                     value={skuInput}
                     onChange={(e) => handleSkuChange(e.target.value)}
                     list="catalog-skus"
-                    className="w-full bg-white border border-slate-200 text-slate-755 text-xs rounded-lg px-2.5 py-2 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 uppercase"
+                    className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-755 dark:text-slate-100 text-xs rounded-lg px-2.5 py-2 placeholder-slate-400 dark:placeholder-slate-500 outline-none focus:border-blue-500 dark:focus:border-blue-600 uppercase"
                   />
                   {/* Autocomplete help list */}
                   <datalist id="catalog-skus">
@@ -297,32 +297,32 @@ export default function InternalRequisitions({
                 </div>
 
                 <div>
-                  <label className="block text-[9px] font-mono text-slate-500 uppercase mb-1">Cantidad</label>
+                  <label className="block text-[9px] font-mono text-slate-500 dark:text-slate-400 uppercase mb-1">Cantidad</label>
                   <input
                     type="number"
                     min={1}
                     value={quantityInput}
                     onChange={(e) => setQuantityInput(parseInt(e.target.value) || 1)}
-                    className="w-full bg-white border border-slate-200 text-slate-700 text-xs rounded-lg px-2 py-2 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-100 text-xs rounded-lg px-2 py-2 outline-none focus:border-blue-500 dark:focus:border-blue-600"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[9px] font-mono text-slate-500 uppercase mb-1">Descripción del Producto</label>
+                <label className="block text-[9px] font-mono text-slate-500 dark:text-slate-400 uppercase mb-1">Descripción del Producto</label>
                 <input
                   type="text"
                   placeholder="Se auto-rellena al escribir SKU..."
                   value={descriptionInput}
                   onChange={(e) => setDescriptionInput(e.target.value)}
-                  className="w-full bg-white border border-slate-200 text-slate-700 text-xs rounded-lg px-3 py-2 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 text-xs rounded-lg px-3 py-2 placeholder-slate-400 dark:placeholder-slate-500 outline-none focus:border-blue-500 dark:focus:border-blue-600"
                 />
               </div>
 
               <button
                 type="button"
                 onClick={handleAddItem}
-                className="w-full py-2 px-3 bg-blue-50 border border-blue-200 hover:bg-blue-100 text-blue-700 text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                className="w-full py-2 px-3 bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/60 hover:bg-blue-100 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-400 text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" /> Agregar a Lista
               </button>
@@ -330,35 +330,35 @@ export default function InternalRequisitions({
 
             {/* List Table of draft items */}
             <div className="space-y-2 flex-1 min-h-[140px] max-h-[220px] overflow-y-auto pr-1">
-              <span className="text-[10px] font-mono uppercase text-slate-500 font-bold block">
+              <span className="text-[10px] font-mono uppercase text-slate-500 dark:text-slate-400 font-bold block">
                 Artículos en la Solicitud ({draftItems.length})
               </span>
               
               {draftItems.length === 0 ? (
-                <div className="h-28 border border-dashed border-slate-200 rounded-xl flex flex-col justify-center items-center text-slate-400 bg-slate-50/50">
-                  <Tag className="w-5 h-5 text-slate-400 mb-1" />
+                <div className="h-28 border border-dashed border-slate-200 dark:border-slate-800 rounded-xl flex flex-col justify-center items-center text-slate-400 dark:text-slate-500 bg-slate-50/50 dark:bg-slate-900/40 transition-colors">
+                  <Tag className="w-5 h-5 text-slate-400 dark:text-slate-500 mb-1" />
                   <p className="text-[11px]">Agregue artículos para enviar la solicitud</p>
                 </div>
               ) : (
-                <div className="divide-y divide-slate-100 border border-slate-200 rounded-xl bg-white overflow-hidden">
+                <div className="divide-y divide-slate-100 dark:divide-slate-800 border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-950 overflow-hidden transition-colors">
                   {draftItems.map((item) => (
-                    <div key={item.id} className="p-2 sm:p-3 flex items-center justify-between gap-2 hover:bg-slate-50">
+                    <div key={item.id} className="p-2 sm:p-3 flex items-center justify-between gap-2 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors">
                       <div>
                         <div className="flex items-center gap-1.5">
-                          <span className="text-[10px] font-mono bg-blue-50 text-blue-700 border border-blue-100 px-1.5 rounded">
+                          <span className="text-[10px] font-mono bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400 border border-blue-100 dark:border-blue-900/60 px-1.5 rounded">
                             {item.sku}
                           </span>
-                          <span className="text-slate-800 text-xs font-medium truncate max-w-[150px] sm:max-w-[180px]">
+                          <span className="text-slate-800 dark:text-slate-200 text-xs font-medium truncate max-w-[150px] sm:max-w-[180px]">
                             {item.description}
                           </span>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <span className="text-slate-600 text-xs font-mono font-medium">Cant: {item.quantity}</span>
+                        <span className="text-slate-600 dark:text-slate-400 text-xs font-mono font-medium">Cant: {item.quantity}</span>
                         <button
                           type="button"
                           onClick={() => handleRemoveDraftItem(item.id)}
-                          className="text-slate-400 hover:text-rose-600 p-1 rounded hover:bg-slate-100"
+                          className="text-slate-400 dark:text-slate-555 hover:text-rose-650 hover:bg-slate-100 dark:hover:bg-slate-800 p-1 rounded cursor-pointer transition-colors bg-transparent border-0 outline-none"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -380,17 +380,17 @@ export default function InternalRequisitions({
         </div>
 
         {/* Right Side: Requisition History (Span 7) */}
-        <div className="lg:col-span-7 bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm flex flex-col">
+        <div className="lg:col-span-7 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm flex flex-col transition-colors duration-250">
           {/* Filter/Search Bar */}
-          <div className="p-4 border-b border-slate-200 flex flex-col sm:flex-row gap-3 items-center justify-between bg-slate-50/50">
+          <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row gap-3 items-center justify-between bg-slate-50/50 dark:bg-slate-900/50 transition-colors">
             <div className="relative w-full sm:w-72">
-              <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+              <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-450 dark:text-slate-500" />
               <input
                 type="text"
                 placeholder="Buscar requisición por código, bodega o encargado..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-white border border-slate-200 text-xs placeholder-slate-400 text-slate-700 pl-9 pr-4 py-2 rounded-lg outline-none focus:border-blue-500 transition-colors"
+                className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs placeholder-slate-400 dark:placeholder-slate-500 text-slate-700 dark:text-slate-200 pl-9 pr-4 py-2 rounded-lg outline-none focus:border-blue-500 dark:focus:border-blue-600 transition-colors"
               />
             </div>
 
@@ -403,7 +403,7 @@ export default function InternalRequisitions({
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer transition-colors shrink-0 ${
                     filterStatus === status
                       ? 'bg-blue-600 text-white'
-                      : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
+                      : 'bg-slate-100 dark:bg-slate-900 hover:bg-slate-205 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400'
                   }`}
                 >
                   {status === 'all' ? 'Ver Todo' : status}
@@ -413,19 +413,19 @@ export default function InternalRequisitions({
           </div>
 
           {/* History table */}
-          <div className="overflow-x-auto flex-1">
-            <table className="w-full text-left border-collapse">
+          <div className="overflow-x-auto flex-1 text-slate-800 dark:text-slate-205">
+            <table className="w-full text-left border-collapse text-xs">
               <thead>
-                <tr className="border-b border-slate-200 bg-slate-50 text-[10px] font-mono text-slate-500 uppercase tracking-wider">
-                  <th className="py-3 px-4">Código / Fecha</th>
-                  <th className="py-3 px-4">Ruta (Origen ➔ Destino)</th>
-                  <th className="py-3 px-4">Solicitante</th>
-                  <th className="py-3 px-4 text-center">Ítems</th>
-                  <th className="py-3 px-4">Estado</th>
-                  <th className="py-3 px-4 text-right">Acción</th>
+                <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 font-mono text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors">
+                  <th className="py-3 px-4 font-bold">Código / Fecha</th>
+                  <th className="py-3 px-4 font-bold">Ruta (Origen ➔ Destino)</th>
+                  <th className="py-3 px-4 font-bold">Solicitante</th>
+                  <th className="py-3 px-4 text-center font-bold">Ítems</th>
+                  <th className="py-3 px-4 font-bold">Estado</th>
+                  <th className="py-3 px-4 text-right font-bold">Acción</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 text-slate-600 text-xs">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-850 text-slate-600 dark:text-slate-300">
                 {filteredRequisitions.map((req) => {
                   const originName = branches.find((b) => b.id === req.originId)?.name || 'Bodega General';
                   const destinationName = branches.find((b) => b.id === req.destinationId)?.name || 'Sucursal';
@@ -433,46 +433,46 @@ export default function InternalRequisitions({
                   return (
                     <tr
                       key={req.id}
-                      className="hover:bg-slate-50 transition-colors cursor-pointer group"
+                      className="hover:bg-slate-50/50 dark:hover:bg-slate-900/40 transition-colors cursor-pointer group"
                       onClick={() => setSelectedReq(req)}
                     >
                       <td className="py-3 px-4">
-                        <span className="font-semibold text-blue-600 block group-hover:underline">
+                        <span className="font-semibold text-blue-600 dark:text-blue-450 block group-hover:underline">
                           {req.id}
                         </span>
-                        <span className="text-[10px] text-slate-500 font-mono block">
+                        <span className="text-[10px] text-slate-500 dark:text-slate-450 font-mono block">
                           {req.date}
                         </span>
                       </td>
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-1.5">
-                          <span className="text-slate-800 font-medium whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]" title={originName}>
+                          <span className="text-slate-800 dark:text-slate-200 font-medium whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]" title={originName}>
                             {originName.replace('CEDI Central ', '').replace('CEDI Regional ', '')}
                           </span>
-                          <span className="text-slate-400">➔</span>
-                          <span className="text-blue-700 font-medium whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]" title={destinationName}>
+                          <span className="text-slate-400 dark:text-slate-600">➔</span>
+                          <span className="text-blue-700 dark:text-blue-400 font-medium whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]" title={destinationName}>
                             {destinationName.replace('Sucursal ', '')}
                           </span>
                         </div>
-                        <p className="text-[9px] text-slate-500 font-mono mt-0.5">Asignación automática de enlace</p>
+                        <p className="text-[9px] text-slate-500 dark:text-slate-450 font-mono mt-0.5">Asignación automática de enlace</p>
                       </td>
                       <td className="py-3 px-4">
-                        <span className="block text-slate-700">{req.managerName}</span>
+                        <span className="block text-slate-700 dark:text-slate-300">{req.managerName}</span>
                       </td>
                       <td className="py-3 px-4 text-center">
-                        <span className="font-mono bg-slate-100 px-2 py-0.5 rounded border border-slate-200 text-slate-700">
+                        <span className="font-mono bg-slate-100 dark:bg-slate-900 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 transition-colors">
                           {req.items.reduce((total, i) => total + i.quantity, 0)}
                         </span>
                       </td>
                       <td className="py-3 px-4">
-                        <span className={`px-2 py-0.5 rounded-full text-[10px] leading-none font-medium ${getStatusBadgeClass(req.status)}`}>
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] leading-none font-medium border ${getStatusBadgeClass(req.status)}`}>
                           {req.status}
                         </span>
                       </td>
                       <td className="py-3 px-4 text-right" onClick={(e) => e.stopPropagation()}>
                         <button
                           onClick={() => setSelectedReq(req)}
-                          className="px-2.5 py-1 text-slate-650 hover:text-slate-900 hover:bg-slate-50 border border-slate-200 rounded-lg text-xs leading-none transition-colors bg-white shadow-xs"
+                          className="px-2.5 py-1 text-slate-650 dark:text-slate-400 hover:text-slate-905 dark:hover:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-xs leading-none transition-colors bg-white dark:bg-slate-950 shadow-xs cursor-pointer"
                         >
                           Gestionar
                         </button>
@@ -482,9 +482,9 @@ export default function InternalRequisitions({
                 })}
                 {filteredRequisitions.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="text-center py-12 text-slate-450">
+                    <td colSpan={6} className="text-center py-12 text-slate-400 dark:text-slate-500">
                       <p className="text-sm font-medium">No se encontraron requisiciones registradas.</p>
-                      <p className="text-xs text-slate-500 mt-1">Intente cambiar el filtro o cree una en la sección izquierda.</p>
+                      <p className="text-xs text-slate-505 dark:text-slate-450 mt-1">Intente cambiar el filtro o cree una en la sección izquierda.</p>
                     </td>
                   </tr>
                 )}
@@ -496,20 +496,20 @@ export default function InternalRequisitions({
 
       {/* Modal / Details Drawer for Requisition State and dispatch */}
       {selectedReq && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fade-in">
-          <div className="bg-white border border-slate-200 rounded-2xl max-w-2xl w-full overflow-hidden shadow-xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-xs animate-fade-in">
+          <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-2xl w-full overflow-hidden shadow-xl animate-fade-in transition-colors duration-250">
             {/* Header */}
-            <div className="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+            <div className="bg-slate-50 dark:bg-slate-900 px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center transition-colors">
               <div>
-                <h3 className="text-slate-800 font-semibold text-base flex items-center gap-1.5">
-                  <FileText className="w-4 h-4 text-blue-650" />
+                <h3 className="text-slate-800 dark:text-slate-100 font-semibold text-base flex items-center gap-1.5">
+                  <FileText className="w-4 h-4 text-blue-600 dark:text-blue-500" />
                   Detalle de Requisición {selectedReq.id}
                 </h3>
-                <p className="text-xs text-slate-500 font-mono mt-0.5">Fecha de Envío: {selectedReq.date}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-450 font-mono mt-0.5">Fecha de Envío: {selectedReq.date}</p>
               </div>
               <button
                 onClick={() => setSelectedReq(null)}
-                className="p-1 px-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 border border-slate-200 rounded-lg transition-colors bg-white"
+                className="p-1.5 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded-lg transition-colors bg-white dark:bg-slate-950 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -517,48 +517,48 @@ export default function InternalRequisitions({
 
             <div className="p-6 space-y-6">
               {/* Route segment detail */}
-              <div className="bg-slate-50 p-4 border border-slate-200 rounded-xl grid grid-cols-3 items-center text-center">
+              <div className="bg-slate-50 dark:bg-slate-900 p-4 border border-slate-200 dark:border-slate-800 rounded-xl grid grid-cols-3 items-center text-center transition-colors">
                 <div className="text-left">
-                  <span className="text-[10px] uppercase font-mono text-slate-500 block">DESPACHA DESDE</span>
-                  <span className="text-xs font-semibold text-slate-850 mt-1 block">
+                  <span className="text-[10px] uppercase font-mono text-slate-500 dark:text-slate-450 block">DESPACHA DESDE</span>
+                  <span className="text-xs font-semibold text-slate-800 dark:text-slate-105 mt-1 block">
                     {branches.find((b) => b.id === selectedReq.originId)?.name || 'Bodega de Despacho'}
                   </span>
-                  <span className="text-[10px] text-slate-500 block mt-0.5">
+                  <span className="text-[10px] text-slate-500 dark:text-slate-450 block mt-0.5">
                     {branches.find((b) => b.id === selectedReq.originId)?.address}
                   </span>
                 </div>
 
                 <div className="flex flex-col items-center">
-                  <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-semibold tracking-wide ${getStatusBadgeClass(selectedReq.status)}`}>
+                  <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-semibold tracking-wide border ${getStatusBadgeClass(selectedReq.status)}`}>
                     {selectedReq.status.toUpperCase()}
                   </span>
-                  <div className="w-full max-w-[80px] h-[2px] bg-slate-200 relative my-2">
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-blue-600"></div>
+                  <div className="w-full max-w-[80px] h-[2px] bg-slate-200 dark:bg-slate-800 relative my-2">
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-blue-600 dark:bg-blue-500 font-bold"></div>
                   </div>
-                  <span className="text-[10px] font-mono text-slate-400">Mapeo CD Directo</span>
+                  <span className="text-[10px] font-mono text-slate-400 dark:text-slate-500">Mapeo CD Directo</span>
                 </div>
 
                 <div className="text-right">
-                  <span className="text-[10px] uppercase font-mono text-slate-500 block">TIENDA / DESTINO</span>
-                  <span className="text-xs font-semibold text-blue-700 mt-1 block">
+                  <span className="text-[10px] uppercase font-mono text-slate-500 dark:text-slate-450 block">TIENDA / DESTINO</span>
+                  <span className="text-xs font-semibold text-blue-750 dark:text-blue-400 mt-1 block">
                     {branches.find((b) => b.id === selectedReq.destinationId)?.name || 'Sucursal de Destino'}
                   </span>
-                  <span className="text-[10px] text-slate-500 block mt-0.5">
+                  <span className="text-[10px] text-slate-500 dark:text-slate-450 block mt-0.5">
                     {branches.find((b) => b.id === selectedReq.destinationId)?.address}
                   </span>
                 </div>
               </div>
 
               {/* Responsable & Routing audit */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs">
-                  <span className="text-slate-500 font-mono text-[9px] uppercase">Solicitante en Planta</span>
-                  <span className="block font-medium text-slate-800 mt-0.5">{selectedReq.managerName}</span>
+              <div className="grid grid-cols-2 gap-4 text-slate-800 dark:text-slate-200">
+                <div className="p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-xs transition-colors">
+                  <span className="text-slate-500 dark:text-slate-450 font-mono text-[9px] uppercase">Solicitante en Planta</span>
+                  <span className="block font-medium text-slate-800 dark:text-slate-100 mt-0.5">{selectedReq.managerName}</span>
                 </div>
 
-                <div className="p-3 bg-slate-55/30 border border-slate-200 rounded-lg text-xs">
-                  <span className="text-slate-500 font-mono text-[9px] uppercase">Canal de Distribución</span>
-                  <span className="block font-medium text-blue-700 mt-0.5">
+                <div className="p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-xs transition-colors">
+                  <span className="text-slate-500 dark:text-slate-450 font-mono text-[9px] uppercase">Canal de Distribución</span>
+                  <span className="block font-medium text-blue-700 dark:text-blue-400 mt-0.5">
                     {branches.find((b) => b.id === selectedReq.originId)?.name.split(' ')[0]} ➔{' '}
                     {branches.find((b) => b.id === selectedReq.destinationId)?.name.split(' ').slice(-1)[0]}
                   </span>
@@ -567,23 +567,23 @@ export default function InternalRequisitions({
 
               {/* Items List */}
               <div className="space-y-2">
-                <span className="text-[10px] font-mono uppercase text-slate-500 font-bold block">Artículos Solicitados</span>
-                <div className="border border-slate-200 rounded-xl overflow-hidden divide-y divide-slate-100 bg-white max-h-48 overflow-y-auto">
+                <span className="text-[10px] font-mono uppercase text-slate-500 dark:text-slate-450 font-bold block">Artículos Solicitados</span>
+                <div className="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-950 max-h-48 overflow-y-auto transition-colors">
                   {selectedReq.items.map((it) => (
-                    <div key={it.id} className="p-3 flex justify-between items-center text-xs hover:bg-slate-50">
+                    <div key={it.id} className="p-3 flex justify-between items-center text-xs hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors">
                       <div className="flex items-center gap-2">
-                        <span className="font-mono bg-blue-50 text-blue-700 px-1.5 rounded text-[10px] font-semibold">{it.sku}</span>
-                        <span className="font-medium text-slate-700">{it.description}</span>
+                        <span className="font-mono bg-blue-50 text-blue-700 dark:bg-blue-955 dark:text-blue-400 px-1.5 rounded text-[10px] font-semibold">{it.sku}</span>
+                        <span className="font-medium text-slate-700 dark:text-slate-300">{it.description}</span>
                       </div>
-                      <span className="font-mono font-bold text-slate-700">CANT: {it.quantity}</span>
+                      <span className="font-mono font-bold text-slate-700 dark:text-slate-300">CANT: {it.quantity}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Update Status Buttons */}
-              <div className="border-t border-slate-200 pt-4 space-y-3">
-                <span className="text-[10px] font-mono uppercase text-slate-500 font-bold block">Actualizar Estado de Procesamiento</span>
+              <div className="border-t border-slate-200 dark:border-slate-800 pt-4 space-y-3">
+                <span className="text-[10px] font-mono uppercase text-slate-500 dark:text-slate-450 font-bold block">Actualizar Estado de Procesamiento</span>
                 <div className="grid grid-cols-5 gap-1.5">
                   {(['Pendiente', 'Procesado', 'En Tránsito', 'Entregado', 'Cancelado'] as RequisitionStatus[]).map((st) => (
                     <button
@@ -592,7 +592,7 @@ export default function InternalRequisitions({
                       className={`py-2 px-1 rounded-lg text-[10px] font-bold text-center cursor-pointer transition-all ${
                         selectedReq.status === st
                           ? 'bg-blue-600 text-white shadow-sm border-blue-500'
-                          : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-800 hover:bg-slate-50'
+                          : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800'
                       }`}
                     >
                       {st}
@@ -603,19 +603,19 @@ export default function InternalRequisitions({
             </div>
 
             {/* Actions Footer */}
-            <div className="bg-slate-50 p-4 border-t border-slate-200 flex justify-between">
+            <div className="bg-slate-50 dark:bg-slate-900 p-4 border-t border-slate-200 dark:border-slate-800 flex justify-between transition-colors">
               <button
                 onClick={() => {
                   showNotice(`Generando de forma interna la Guía de Abasto para Requisición ${selectedReq.id}.`);
                   setSelectedReq(null);
                 }}
-                className="px-4 py-2 border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 bg-white shadow-xs"
+                className="px-4 py-2 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 bg-white dark:bg-slate-950 shadow-xs"
               >
                 Imprimir Guía de Abasto
               </button>
               <button
                 onClick={() => setSelectedReq(null)}
-                className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs rounded-lg transition-colors cursor-pointer"
+                className="px-4 py-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-705 dark:text-slate-300 text-xs rounded-lg transition-colors cursor-pointer"
               >
                 Cerrar Detalle
               </button>
