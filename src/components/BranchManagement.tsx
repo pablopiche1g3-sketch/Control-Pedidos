@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Branch, PointType, Requisition } from '../types';
-import { Plus, Shield, MapPin, Building2, User, Phone, Mail, Link, Layers, ArrowRight, TrendingUp, X } from 'lucide-react';
+import { Plus, Shield, MapPin, Building2, User, Phone, Mail, Link, Layers, ArrowRight, TrendingUp, X, Trash2 } from 'lucide-react';
 
 interface BranchManagementProps {
   branches: Branch[];
@@ -425,6 +425,7 @@ export default function BranchManagement({ branches, setBranches, requisitions }
                     <th className="py-2.5 px-4 font-bold">Tipo</th>
                     <th className="py-2.5 px-4 font-bold">Enlace de Abasto</th>
                     <th className="py-2.5 px-4 font-bold">Encargado / Teléfono</th>
+                    <th className="py-2.5 px-4 text-center font-bold">Acción</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-850 text-slate-700 dark:text-slate-300">
@@ -464,6 +465,21 @@ export default function BranchManagement({ branches, setBranches, requisitions }
                       <td className="py-3 px-4">
                         <span className="block text-slate-800 dark:text-slate-200 font-medium">{point.manager}</span>
                         <span className="block text-[10px] text-slate-500 dark:text-slate-450 font-mono font-semibold">{point.phone}</span>
+                      </td>
+                      <td className="py-3 px-4 text-center">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (confirm(`¿Desea eliminar la sucursal/CEDI "${point.name}"?`)) {
+                              setBranches((prev) => prev.filter((b) => b.id !== point.id));
+                            }
+                          }}
+                          className="p-1 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 rounded transition-colors bg-transparent border-0 outline-none cursor-pointer"
+                          title="Eliminar de Firestore"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
                       </td>
                     </tr>
                   ))}

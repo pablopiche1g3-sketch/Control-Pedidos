@@ -17,7 +17,7 @@ import {
   Moon,
 } from 'lucide-react';
 import { db, seedDatabaseIfEmpty, commitChanges } from './firebase';
-import { collection, onSnapshot, getDocs, writeBatch } from 'firebase/firestore';
+import { collection, onSnapshot, getDocs, writeBatch, doc, setDoc } from 'firebase/firestore';
 
 export default function App() {
   const fromEmail = 'pablopiche1g3@gmail.com';
@@ -26,6 +26,9 @@ export default function App() {
   const [darkMode, setDarkMode] = useState<boolean>(() => {
     return localStorage.getItem('cr_dark_mode') === 'true';
   });
+
+  // --- Database Options Modal State ---
+  const [showResetModal, setShowResetModal] = useState<boolean>(false);
 
   useEffect(() => {
     if (darkMode) {
@@ -143,29 +146,61 @@ export default function App() {
     commitChanges('products', nextVal, products, 'sku');
   };
 
-  // --- Reset Database on Cloud ---
-  const handleResetDatabase = async () => {
-    if (confirm('¿Desea restablecer todos los datos del sistema a los valores de fábrica en la base de datos Firestore? Se borrarán todos los datos actuales del servidor.')) {
-      setDbStatus('resetting');
-      try {
-        const collectionsList = ['products', 'branches', 'suppliers', 'requisitions', 'externalOrders'];
-        for (const coll of collectionsList) {
-          const snap = await getDocs(collection(db, coll));
-          const batch = writeBatch(db);
-          snap.forEach((docSnapshot) => {
-            batch.delete(docSnapshot.ref);
-          });
-          await batch.commit();
-        }
-        await seedDatabaseIfEmpty();
-        alert('¡Base de datos Firestore restablecida con éxito!');
-      } catch (err) {
-        console.error(err);
-        alert('Error al restablecer la base de datos Firestore.');
-        setDbStatus('error');
-      } finally {
-        setDbStatus('connected');
+  // --- Clear Database completely (Blank Slate) ---
+  const handleClearDatabase = async () => {
+    setShowResetModal(false);
+    setDbStatus('resetting');
+    try {
+      const collectionsList = ['products', 'branches', 'suppliers', 'requisitions', 'externalOrders', 'systemSettings'];
+      for (const coll of collectionsList) {
+        const snap = await getDocs(collection(db, coll));
+        const batch = writeBatch(db);
+        snap.forEach((docSnapshot) => {
+          batch.delete(docSnapshot.ref);
+        });
+        await batch.commit();
       }
+
+      // Re-initialize config document as initialized, but empty of default data
+      await setDoc(doc(db, 'systemSettings', 'config'), {
+        initialized: true,
+        clearedAt: new Date().toISOString()
+      });
+
+      alert('¡Base de datos Firestore limpiada con éxito! Todos los datos han sido borrados y está lista para recibir tu información.');
+    } catch (err) {
+      console.error(err);
+      alert('Error al limpiar la base de datos Firestore.');
+      setDbStatus('error');
+    } finally {
+      setDbStatus('connected');
+    }
+  };
+
+  // --- Restore Demo Data ---
+  const handleRestoreDemoDatabase = async () => {
+    setShowResetModal(false);
+    setDbStatus('resetting');
+    try {
+      const collectionsList = ['products', 'branches', 'suppliers', 'requisitions', 'externalOrders', 'systemSettings'];
+      for (const coll of collectionsList) {
+        const snap = await getDocs(collection(db, coll));
+        const batch = writeBatch(db);
+        snap.forEach((docSnapshot) => {
+          batch.delete(docSnapshot.ref);
+        });
+        await batch.commit();
+      }
+      
+      // Run seeding which will write systemSettings/config and defaults
+      await seedDatabaseIfEmpty();
+      alert('¡Datos de demostración restablecidos con éxito!');
+    } catch (err) {
+      console.error(err);
+      alert('Error al restablecer los datos de demostración.');
+      setDbStatus('error');
+    } finally {
+      setDbStatus('connected');
     }
   };
 
@@ -252,12 +287,13 @@ export default function App() {
             </div>
             
             <button
-              onClick={handleResetDatabase}
+              onClick={() => setShowResetModal(true)}
               disabled={dbStatus === 'resetting' || dbStatus === 'connecting'}
-              className="p-1 px-2.5 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 dark:border-slate-800 dark:hover:bg-slate-900 dark:hover:border-slate-700 rounded-lg text-xs text-slate-555 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition-all cursor-pointer bg-white dark:bg-slate-950 disabled:opacity-50"
-              title="Restablecer base de datos en Firestore"
+              className="p-1 px-2.5 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 dark:border-slate-800 dark:hover:bg-slate-900 dark:hover:border-slate-700 rounded-lg text-xs text-slate-650 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition-all cursor-pointer bg-white dark:bg-slate-950 disabled:opacity-50 flex items-center gap-1 font-medium"
+              title="Opciones de Base de Datos (Limpiar o Restablecer)"
             >
-              Restablecer Cloud
+              <RefreshCw className="w-3 h-3" />
+              Base de Datos
             </button>
           </div>
         </div>
@@ -376,6 +412,78 @@ export default function App() {
           </span>
         </div>
       </footer>
+
+      {/* Database Options Modal */}
+      {showResetModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fade-in animate-duration-150">
+          <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-md w-full shadow-2xl p-6 relative">
+            <div className="flex items-center gap-3 border-b border-slate-100 dark:border-slate-900 pb-3 mb-4">
+              <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0">
+                <RefreshCw className="w-4.5 h-4.5" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-slate-50">Gestión de Base de Datos</h3>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                  Selecciona la acción para los datos sincronizados en la nube.
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-3 my-4">
+              <button
+                onClick={() => {
+                  if (confirm('¿Estás seguro de que deseas limpiar la base de datos? Se eliminarán permanentemente todos los productos, sucursales, proveedores y pedidos para comenzar en blanco.')) {
+                    handleClearDatabase();
+                  }
+                }}
+                className="w-full text-left p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-blue-500 dark:hover:border-blue-500 bg-slate-50 dark:bg-slate-900/40 hover:bg-blue-50/10 dark:hover:bg-blue-950/10 transition-all cursor-pointer group flex items-start gap-3"
+              >
+                <div className="w-7 h-7 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-350 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-all text-xs font-bold font-mono">
+                  V
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    Comenzar con Base de Datos Vacía (Limpiar todo)
+                  </h4>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                    Borra productos, sucursales y requisiciones. <strong>Útil para cargar tus propios códigos desde Excel</strong> y registrar tus sucursales reales sin registros ficticios.
+                  </p>
+                </div>
+              </button>
+
+              <button
+                onClick={() => {
+                  if (confirm('¿Estás seguro de que deseas restablecer los datos? Se borrarán los datos actuales y se cargarán los productos y sucursales de demostración.')) {
+                    handleRestoreDemoDatabase();
+                  }
+                }}
+                className="w-full text-left p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-amber-500 dark:hover:border-amber-500 bg-slate-50 dark:bg-slate-900/40 hover:bg-amber-50/10 dark:hover:bg-amber-950/10 transition-all cursor-pointer group flex items-start gap-3"
+              >
+                <div className="w-7 h-7 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-350 flex items-center justify-center flex-shrink-0 group-hover:bg-amber-500 group-hover:text-white transition-all text-xs font-bold font-mono">
+                  D
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-slate-200 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+                    Restablecer con Datos de Demostración (Fábrica)
+                  </h4>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                    Borra la información actual y vuelve a cargar los productos, sucursales (CEDIs, sucursales de prueba) y pedidos iniciales para demostraciones.
+                  </p>
+                </div>
+              </button>
+            </div>
+
+            <div className="flex justify-end gap-2 border-t border-slate-100 dark:border-slate-900 pt-3">
+              <button
+                onClick={() => setShowResetModal(false)}
+                className="px-3.5 py-1.5 border border-slate-250 dark:border-slate-850 hover:bg-slate-55 dark:hover:bg-slate-900 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-350 cursor-pointer transition-all bg-white dark:bg-slate-950"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

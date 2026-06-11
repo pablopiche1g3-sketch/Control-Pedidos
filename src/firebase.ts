@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, doc, writeBatch, getDocs } from 'firebase/firestore';
+import { getFirestore, collection, doc, writeBatch, getDocs, getDoc, setDoc } from 'firebase/firestore';
 import {
   DEFAULT_PRODUCTS,
   DEFAULT_BRANCHES,
@@ -23,31 +23,64 @@ export const db = getFirestore(app);
 
 // Seeding helper to initialize data if Firestore collections are empty
 export async function seedDatabaseIfEmpty() {
-  const querySnapshot = await getDocs(collection(db, 'products'));
-  if (querySnapshot.empty) {
-    console.log('Database empty. Seeding defaults...');
-    const batch = writeBatch(db);
+  const configDocRef = doc(db, 'systemSettings', 'config');
+  try {
+    const configSnap = await getDoc(configDocRef);
+    if (!configSnap.exists()) {
+      console.log('Database empty or not initialized. Seeding defaults...');
+      const batch = writeBatch(db);
 
-    DEFAULT_PRODUCTS.forEach((p) => {
-      batch.set(doc(db, 'products', p.sku), p);
-    });
-    DEFAULT_BRANCHES.forEach((b) => {
-      batch.set(doc(db, 'branches', b.id), b);
-    });
-    DEFAULT_SUPPLIERS.forEach((s) => {
-      batch.set(doc(db, 'suppliers', s.id), s);
-    });
-    DEFAULT_REQUISITIONS.forEach((r) => {
-      batch.set(doc(db, 'requisitions', r.id), r);
-    });
-    DEFAULT_EXTERNAL_ORDERS.forEach((o) => {
-      batch.set(doc(db, 'externalOrders', o.id), o);
-    });
+      // Save initialized flag
+      batch.set(configDocRef, { initialized: true, seededAt: new Date().toISOString() });
 
-    await batch.commit();
-    console.log('Database seeded successfully!');
+      DEFAULT_PRODUCTS.forEach((p) => {
+        batch.set(doc(db, 'products', p.sku), p);
+      });
+      DEFAULT_BRANCHES.forEach((b) => {
+        batch.set(doc(db, 'branches', b.id), b);
+      });
+      DEFAULT_SUPPLIERS.forEach((s) => {
+        batch.set(doc(db, 'suppliers', s.id), s);
+      });
+      DEFAULT_REQUISITIONS.forEach((r) => {
+        batch.set(doc(db, 'requisitions', r.id), r);
+      });
+      DEFAULT_EXTERNAL_ORDERS.forEach((o) => {
+        batch.set(doc(db, 'externalOrders', o.id), o);
+      });
+
+      await batch.commit();
+      console.log('Database seeded successfully!');
+    } else {
+      console.log('Database already initialized. Skipping seeding.');
+    }
+  } catch (err) {
+    console.error('Error in seedDatabaseIfEmpty:', err);
+    // Legacy fallback check in case of permission issues or other errors with systemSettings
+    const querySnapshot = await getDocs(collection(db, 'products'));
+    if (querySnapshot.empty) {
+      console.log('Fallback legacy check: Database empty. Seeding defaults...');
+      const batch = writeBatch(db);
+      DEFAULT_PRODUCTS.forEach((p) => {
+        batch.set(doc(db, 'products', p.sku), p);
+      });
+      DEFAULT_BRANCHES.forEach((b) => {
+        batch.set(doc(db, 'branches', b.id), b);
+      });
+      DEFAULT_SUPPLIERS.forEach((s) => {
+        batch.set(doc(db, 'suppliers', s.id), s);
+      });
+      DEFAULT_REQUISITIONS.forEach((r) => {
+        batch.set(doc(db, 'requisitions', r.id), r);
+      });
+      DEFAULT_EXTERNAL_ORDERS.forEach((o) => {
+        batch.set(doc(db, 'externalOrders', o.id), o);
+      });
+      await batch.commit();
+    }
   }
 }
+
 
 // Generic sync utility to update Firestore document additions, modifications, and deletions in batches of 500
 export async function commitChanges<T extends Record<string, any>>(
