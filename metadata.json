@@ -1,0 +1,6 @@
+{
+  "name": "Centro de Requisición y Pedidos",
+  "description": "Sistema de gestión de órdenes de pedidos internos entre sucursales, pedidos externos a proveedores y asignación a centros de distribución.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
